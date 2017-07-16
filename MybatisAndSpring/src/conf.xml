@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<!--properties标签标示在此XML文件中对对应properties文件进行引用 -->
+	
+	
+	<!-- 给VO类起别名（在本项目当中的唯一ID号），供本项目进行引用 -->
+	<typeAliases>
+		<typeAlias alias="Dept" type="com.vo.Dept" />
+		<typeAlias alias="Emp" type="com.vo.Emp" />
+	</typeAliases>
+	
+	<mappers>
+		<!-- 注册deptMapper.java文件 -->
+		<mapper  resource="com/inter/DeptMapper.xml"/>
+	</mappers>
+
+</configuration>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapping.empMapper">
+	<!-- 多对一关系 -->
+	<resultMap id="JEmp" type="Emp"> 
+		<association property="dept" column="deptno" javaType="Dept"
+		select="com.mapping.deptMapper.getDept"></association>
+	</resultMap>
+	<select id="getEmps" resultMap="JEmp">
+	select * from Emp
+	</select>
+		<!-- 一对多关系 -->
+	<resultMap id="JDept" type="Dept">
+		<collection property="empSet" column="deptno" javaType="java.util.Set"
+		ofType="Emp" select="queryEmps"></collection>
+	</resultMap>
+	<select id="queryEmps" parameterType="int" resultType="Emp">
+		select * from emp where deptno=#{deptno}
+	</select>
+		<!-- foreach标签 -->
+	<select id="getEmpByEmpno" resultType="Emp" parameterType="int">
+		select * from emp where empno in
+		<foreach item="empnos" index="empno" collection="array"
+		open="(" separator="," close=")">
+		#{empnos}
+		</foreach>
+	</select>
+	<!-- 动态sql -->
+	<select id="orderEmp" resultType="Emp" parameterType="string">
+		select * from emp order by ${value}
+	</select>
+	<select id="getEmpByIn" resultType="Emp" parameterType="string">
+		select * from emp where empno in (${value})
+	</select>
+	<select id="queryEmpsByAnd" resultType="Emp" parameterType="hashmap">
+		select * from emp where 1=1 
+		<if test="empno!=null">and empno=#{empno}</if>
+		<if test="ename!=null">and ename=#{ename}</if>
+	</select>
+	<!-- 使用where标签可以自动将and去掉 -->
+	<select id="queryEmpsByWhere" resultType="Emp" parameterType="hashmap">
+		select * from emp1 
+		<where>
+			<if test="empno!=null">
+			empno=#{empno}
+			</if>
+			<if test="ename!=null">
+			and ename=#{ename}
+			</if>
+		</where>
+	</select>
+	<!-- 没有使用set标签 -->
+	<select id="queryEmpsByOr" resultType="Emp" parameterType="hashmap">
+		select * from emp1 
+		<where>
+			<if test="empno!=null">
+			empno=#{empno}
+			</if>
+			<if test="ename!=null">
+			or ename=#{ename}
+			</if>
+		</where>
+	</select>
+	<!-- 相当于switch语句 -->
+	<select id="queryEmpsHaveDefault" resultType="Emp" parameterType="hashmap">
+		select * from emp where 1=1 
+		<choose>
+			<when test="empno!=null">and empno=#{empno}</when>
+			<when test="ename!=null">and ename=#{ename}</when>
+			<otherwise>
+			and sal>3000
+			</otherwise>
+		</choose>
+	</select>
+	<!-- 没有使用set标签 -->
+	<select id="updateEmp" parameterType="hashmap">
+		update emp1 set 
+		<if test="emp.empno!=null">	empno=#{emp.empno},</if>
+		<if test="emp.ename!=null">	ename=#{emp.ename},</if>
+		<if test="emp.job!=null">	job=#{emp.job},</if>
+		<if test="emp.mgr!=null">	mgr=#{emp.mgr},</if>
+		sal=sal where empno=#{empno}
+	</select>
+	<!-- 使用set和where标签 -->
+	<select id="updateEmpSet" parameterType="hashmap">
+		update emp1 
+		<set>
+			<if test="emp.empno!=null">	empno=#{emp.empno},</if>
+			<if test="emp.ename!=null">	ename=#{emp.ename},</if>
+			<if test="emp.job!=null">	job=#{emp.job},</if>
+			<if test="emp.mgr!=null">	mgr=#{emp.mgr},</if>
+		</set>
+		<where>
+			empno=#{empno}
+		</where>
+	</select>
+	<!-- 使用trim标签 可以将前后去掉 -->
+	<select id="updateEmpTrim" parameterType="hashmap">
+		update emp1 
+		<trim prefix="set" prefixOverrides="," suffixOverrides=",">
+		</trim>
+			<if test="emp.empno!=null">,empno=#{emp.empno},</if>
+			<if test="emp.ename!=null">,ename=#{emp.ename},</if>
+			<if test="emp.job!=null">,job=#{emp.job},</if>
+			<if test="emp.mgr!=null">,mgr=#{emp.mgr},</if>
+		<where>
+			empno=#{empno}
+		</where>
+	</select>
+	<select id="queryEmpsByTrim1" resultType="Emp" parameterType="hashmap">
+		select * from emp1 
+		<trim prefix="where" prefixOverrides="and |or">
+			<if test="empno!=null">empno=#{empno}</if>
+			<if test="ename!=null">or ename=#{ename}</if>
+		</trim>
+	</select>
+	<!-- -->
+	<resultMap type="hashMap" id="countEmp">
+      <result property="最高工资" column="maxLoc"/>
+      <result property="最低工资" column="minLoc"/>
+      <result property="平均工资" column="valLoc"/>
+    </resultMap>
+    <select id="countEmp" resultMap="countEmp">
+    	select max(loc) as maxLoc,min(minLoc) as minLoc,val(loc) as valLoc from emp
+    </select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

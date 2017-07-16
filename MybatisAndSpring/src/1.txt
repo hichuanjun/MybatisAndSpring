@@ -1,0 +1,6 @@
+spring and mybatis整合过程
+1.导入jar包（jdbc spring mybatis和连接spring和mybatis包 事物包等 ）
+2.applicationContext.xml和conf.xml文件
+3.配置applicationContext.xml,
+（1）配置数据源 （2）配置 sqlSessionFactory （3） 配置 映射类的动态代理类 
+4.配置conf.xml文件，将xml文件加载到<mapper resource=""/>
