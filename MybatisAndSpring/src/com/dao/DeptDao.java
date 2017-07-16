@@ -70,4 +70,6 @@ public class DeptDao {
 		return  "redirect:/query";
 		
 	}
+	public String updateString(){
+		return null;}
 }
