@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 为这个mapper指定一个唯一的namespace，namespace的值习惯上设置成包名+sql映射文件名，这样就能够保证namespace的值是唯一的
+例如namespace="me.gacl.mapping.userMapper"就是me.gacl.mapping(包名)+userMapper(userMapper.xml文件去除后缀)
+ -->
+<mapper namespace="com.mapping.deptMapper">
+    <!-- 在select标签中编写查询的SQL语句， 设置select标签的id属性为getUser，id属性值必须是唯一的，不能够重复
+    使用parameterType属性指明查询时使用的参数类型，resultType属性指明查询返回的结果集类型
+    resultType="me.gacl.domain.User"就表示将查询结果封装成一个User类的对象返回
+    User类就是users表所对应的实体类
+    -->
+    <!-- 
+        根据id查询得到一个user对象,本条映射的全名是：com.mapping.deptMapper.getDept（namespace+id）
+     -->
+      <!--parameterType:参数类型 ,int 是Integer别名-->
+      <!-- deprno自动增长 -->
+    <insert id="insertAeptByAutoAdd" parameterType="hashMap" >
+      <selectKey keyProperty="id" resultType="int" order="BEFORE">
+      	select max(deptno)+1 from dept
+      </selectKey>
+      insert into dept values(#{id},#{dname},#{loc})
+    </insert>
+    <resultMap type="hashMap" id="countDept">
+      <result property="最大部门号" column="maxdeptno"/>
+      <result property="部门数" column="countdeptno"/>
+      <result property="最小部门号" column="mindeptno"/>
+    </resultMap>
+    <select id="countDept" resultMap="countDept">
+    	select max(deptno) as maxdeptno,count(deptno) as countdeptno,min(deptno) as mindeptno from dept
+    </select>
+    <select id="getDeptAll" parameterType="hashmap" 
+        resultType="Dept">
+    select * from dept where deptno=#{deptno} or dname=#{dname} or loc=#{loc}
+    </select>
+    <select id="getDept" parameterType="int" 
+        resultType="Dept">
+        select * from dept where deptno=#{deptno}
+    </select>
+     <!-- org.mapping.deptMapper.getDepts-->
+    <select id="getDepts" resultType="Dept">
+    		select * from dept
+    </select>
+    <!-- 插入语句 -->
+ 	<insert id="addDept" parameterType="Dept">
+ 		insert into dept values(#{deptno},#{dname},#{loc})
+ 	</insert>
+   <!-- 删除 -->
+   <delete id="delDept" parameterType="int">
+   		delete from dept where deptno=${deptno}
+   </delete>
+   <update id="updateDept" parameterType="Dept">
+   		update dept set dname='${dname}',loc='${loc}' where deptno=${deptno}
+   </update>
+</mapper>
